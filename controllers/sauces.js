@@ -17,6 +17,8 @@ exports.createSauce = (req, res, next) => {
     imageUrl: `${req.protocol}://${req.get("host")}/images/${
       req.file.filename
     }`,
+    likes: 0,
+    dislikes: 0,
   });
 
   sauce
@@ -99,6 +101,8 @@ exports.getOneSauce = (req, res, next) => {
           description: decode.htmlspecialchars_decode(sauce.description),
           mainPepper: decode.htmlspecialchars_decode(sauce.mainPepper),
           manufacturer: decode.htmlspecialchars_decode(sauce.manufacturer),
+          like: parseInt(sauce.like),
+          dislike: parseInt(sauce.dislike),
         };
 
         res.status(200).json(sauce);

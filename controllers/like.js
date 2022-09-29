@@ -13,27 +13,30 @@ exports.likeSauce = (req, res, next) => {
           $push: { usersLiked: userId },
         };
         messageLike = "Sauce like à 1";
-      }
-      if (sauce.usersLiked.includes(userId) && like === 0) {
-        updateLike = {
-          $inc: { likes: -1 },
-          $pull: { usersLiked: userId },
-        };
-        messageLike = "Sauce like à 0";
-      }
-      if (!sauce.usersDisliked.includes(userId) && like === -1) {
-        updateLike = {
-          $inc: { dislikes: 1 },
-          $push: { usersDisliked: userId },
-        };
-        messageLike = "Sauce dislike à 1";
-      }
-      if (sauce.usersDisliked.includes(userId) && like === 0) {
-        updateLike = {
-          $inc: { dislikes: -1 },
-          $pull: { usersDisliked: userId },
-        };
-        messageLike = "Sauce dislike à 0";
+      } else {
+        if (sauce.usersLiked.includes(userId) && like === 0) {
+          updateLike = {
+            $inc: { likes: -1 },
+            $pull: { usersLiked: userId },
+          };
+          messageLike = "Sauce like à 0";
+        } else {
+          if (!sauce.usersDisliked.includes(userId) && like === -1) {
+            updateLike = {
+              $inc: { dislikes: 1 },
+              $push: { usersDisliked: userId },
+            };
+            messageLike = "Sauce dislike à 1";
+          } else {
+            if (sauce.usersDisliked.includes(userId) && like === 0) {
+              updateLike = {
+                $inc: { dislikes: -1 },
+                $pull: { usersDisliked: userId },
+              };
+              messageLike = "Sauce dislike à 0";
+            }
+          }
+        }
       }
       Sauce.updateOne({ _id: req.params._id }, updateLike)
         .then(() => res.status(201).json({ message: messageLike }))
