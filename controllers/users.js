@@ -41,26 +41,32 @@ exports.login = (req, res, next) => {
   User.findOne({ email: emailUser })
     .then((user) => {
       if (!user) {
-        res
-          .status(401)
+        return res
+          .status(400)
           .json({ message: "indentifiants/Mot de passe incorrect" });
+      } else {
+        bcrypt
+          .compare(passwordUser, user.password)
+          .then((valid) => {
+            if (!valid) {
+              return res.status(401).json({
+                message: "indentifiant/Mot de passes incorrect",
+              });
+            } else {
+              res.status(200).json({
+                userId: user._id,
+                token: jwt.sign(
+                  { userId: user._id },
+                  `${process.env.secretKey}`,
+                  {
+                    expiresIn: "24h",
+                  }
+                ),
+              });
+            }
+          })
+          .catch((error) => res.status(500).json({ error }));
       }
-      bcrypt
-        .compare(passwordUser, user.password)
-        .then((valid) => {
-          if (!valid) {
-            res.status(401).json({
-              message: "indentifiant/Mot de passes incorrect",
-            });
-          }
-          res.status(200).json({
-            userId: user._id,
-            token: jwt.sign({ userId: user._id }, `${process.env.secretKey}`, {
-              expiresIn: "24h",
-            }),
-          });
-        })
-        .catch((error) => res.status(500).json({ error }));
     })
     .catch((error) => res.status(500).json({ error }));
 };
