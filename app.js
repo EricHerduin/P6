@@ -8,10 +8,10 @@ const path = require("path");
 
 // Connection Mongoose
 mongoose
-  .connect(
-    `mongodb+srv://${process.env.mongoLogin}:${process.env.mongoPassWord}@cluster0.zdgr5vh.mongodb.net/projet6Data?retryWrites=true&w=majority`,
-    { useNewUrlParser: true, useUnifiedTopology: true }
-  )
+  .connect(`${process.env.mongoDb}`, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
   .then(() => console.log("Connexion à MongoDB réussie !"))
   .catch(() => console.log("Connexion à MongoDB échouée !"));
 
